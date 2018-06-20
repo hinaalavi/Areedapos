@@ -72,13 +72,20 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
 
     }
     private void init(AppView app) {
+        initComponents();
+       
+            jPanel11.setEnabled(false);
+            jPanel4.setEnabled(false);
+        
 
-        try {
+       /* try {
             dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
             dlCustomers = (DataLogicCustomers) app.getBean("com.openbravo.pos.customers.DataLogicCustomers");
             m_sentvouch = dlSales.getVoucherList();
 
-            initComponents();        
+            initComponents(); 
+            jPanel11.setEnabled(false);
+            jPanel4.setEnabled(false);
 
             m_VoucherModel = new ComboBoxValModel();
             List a = m_sentvouch.list();
@@ -90,7 +97,7 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
             webLblcustomerName.setText(null);            
             
         } catch (BasicException ex) {
-        }
+        } */
     }    
     
     /**
@@ -104,13 +111,13 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
     
             m_dTotal = dTotal;
             
-            m_jTendered.reset();
+           // m_jTendered.reset();
 //            m_jTendered.activate();
 
-            m_jKeys.setEnabled(false);
-            m_jTendered.setEnabled(false);            
+        //    m_jKeys.setEnabled(false);
+          //  m_jTendered.setEnabled(false);            
             
-            printState();
+          //  printState();
         }
 
     /**
@@ -140,13 +147,14 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
                 return new VoucherPaymentInfo(m_dTicket, m_sPaper,m_voucherInfo.getVoucherNumber());
             }         
 */
-        try {
+       /* try {
             String id = m_VoucherModel.getSelectedKey().toString();
             VoucherInfo m_voucherInfo1 = dlCustomers.getVoucherInfo(id);
             m_sVoucher1 = m_voucherInfo1.getVoucherNumber();                    
         } catch (BasicException ex) {
-        }
-            return new PaymentInfoTicket(m_dTicket, m_sVoucher, m_sVoucher1);                    
+        }*/
+            //return new PaymentInfoTicket(m_dTicket, m_sVoucher, m_sVoucher1); 
+        return new PaymentInfoTicket(m_dTicket, m_sVoucher, m_sVoucher1);
         
     }    
     
@@ -196,6 +204,8 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
         m_jKeys = new com.openbravo.editor.JEditorKeys();
         jPanel1 = new javax.swing.JPanel();
         m_jTendered = new com.openbravo.editor.JEditorCurrencyPositive();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -309,11 +319,34 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
         jPanel11.add(jPanel12, java.awt.BorderLayout.NORTH);
 
         add(jPanel11, java.awt.BorderLayout.EAST);
+
+        jLabel2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel2.setText("Paid through Talabat!");
+        jLabel2.setPreferredSize(new java.awt.Dimension(87, 49));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(210, 210, 210)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(240, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(61, 61, 61)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(271, Short.MAX_VALUE))
+        );
+
+        add(jPanel2, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_jVoucherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jVoucherActionPerformed
     
-        m_jMoneyEuros.setText(null);
+       /* m_jMoneyEuros.setText(null);
 
         if (m_VoucherModel.getSelectedKey()!=null){
             try {
@@ -338,17 +371,19 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
 //                ex.printStackTrace();
             }
 
-        }
+        }*/
     }//GEN-LAST:event_m_jVoucherActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private com.openbravo.editor.JEditorKeys m_jKeys;
     private javax.swing.JLabel m_jMoneyEuros;

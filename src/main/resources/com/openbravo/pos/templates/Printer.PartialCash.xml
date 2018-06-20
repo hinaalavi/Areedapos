@@ -33,11 +33,14 @@
         <line><text length="18" bold="true">Sequence:</text><text>${payments.printSequence()}</text></line> 
         <line><text length="18" bold="true">Start Date:</text><text>${payments.printDateStart()}</text></line>  
         <line><text length="18" bold="true">End Date:</text><text>${payments.printDateEnd()}</text></line>  
+        <line><text length="18" bold="true">First Invoice:</text><text>${payments.getFirstTicket()}</text></line>
+        <line><text length="18" bold="true">Last Invoice</text><text>${payments.getLastTicket()}</text></line>
+        <line><text length="18" bold="true">No of Customers</text><text>${payments.printSales()}</text></line>
         <line></line> 
 <!-- END OF SEQUENCE DETAIL -->
 
 <!-- START OF SALES -->
-        <line size="1"><text align="center" length="42" bold="true">Sales</text></line>
+        <line size="1"><text align="center" length="42" bold="true">Item Summary</text></line>
         <line>
             <text align ="left" length="16" bold="true">Name</text>
             <text align ="right" length="6" bold="true">Sold</text>
@@ -64,7 +67,7 @@
 <!-- END OF SALES SUMMARY -->
 
 <!-- START OF CATEGORIES SUMMARY -->
-        <line size="1"><text align="center" length="42" bold="true">Product Categories</text></line>
+        <line size="1"><text align="center" length="42" bold="true">Summary By Category</text></line>
         <line>
             <text align ="left" length="16" bold="true">Name</text>
             <text align ="right" length="6" bold="true">Sold</text>
@@ -90,7 +93,7 @@
 <!-- END OF CATEGORIES SUMMARY -->
 
 <!-- START OF VOIDS -->
-        <line size="1"><text align="center" length="42" bold="true">Line Voids</text></line>
+        <line size="1"><text align="center" length="42" bold="true">Deleted Tickets</text></line>
         <line>
             <text align ="left" length="6" bold="true">Tkt</text>
             <text align ="left" length="12" bold="true">User</text>
@@ -151,7 +154,7 @@
 <!-- END OF TAXES ANALYSIS -->
 
 <!-- START OF PAYMENTS -->
-        <line size="1"><text align="center" length="42" bold="true">Payments</text></line>
+        <line size="1"><text align="center" length="42" bold="true">Sales Summary</text></line>
         <line>
             <text align ="left" length="32" bold="true">Type</text>
             <text align ="right" length="10" bold="true">Total</text>
@@ -187,6 +190,9 @@
         </line>      
         <line><text align ="left" length="30" bold="true">Net Sales</text>
             <text align ="right" length="12" bold="true">${payments.printSalesBase()}</text>
+        </line>
+        <line><text align ="left" length="30" bold="true">Net Ex. VAT</text>
+	            <text align ="right" length="12" bold="true">${payments.printNetWTax()}</text>
         </line>
         <line><text align ="left" length="30" bold="true">Tax</text>
             <text align ="right" length="12" bold="true">${payments.printSalesTaxes()}</text>

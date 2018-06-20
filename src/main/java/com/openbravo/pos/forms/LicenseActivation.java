@@ -239,7 +239,9 @@ public class LicenseActivation extends javax.swing.JFrame {
         } catch (ProtocolException ex) {
             Logger.getLogger(LicenseActivation.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            JMessageDialog.showMessage(this, new MessageInf(MessageInf.VALID_LICENSE_NOT_FOUND,"Check internet connection"));             
             Logger.getLogger(LicenseActivation.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed

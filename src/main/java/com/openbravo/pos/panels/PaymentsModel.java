@@ -44,7 +44,9 @@ public class PaymentsModel {
     private Date m_dDateStart;
     private Date m_dDateEnd;       
     private Date rDate;
-    private Date m_dPrintDate;    
+    private Date m_dPrintDate;
+    private Integer firstTicket;
+    private Integer lastTicket;
     
             
     private Integer m_iPayments;
@@ -188,11 +190,11 @@ public class PaymentsModel {
         
         // Payments
         Object[] valtickets = (Object []) new StaticSentence(app.getSession()
-            , "SELECT COUNT(*), SUM(payments.TOTAL) " +
-              "FROM payments, receipts " +
-              "WHERE payments.RECEIPT = receipts.ID AND receipts.MONEY = ?"
+            , "SELECT COUNT(*), SUM(payments.TOTAL), MIN(tickets.ticketid), MAX(tickets.ticketid)" +
+              "FROM payments, receipts, tickets " +
+              "WHERE payments.RECEIPT = receipts.ID AND receipts.ID = tickets.id AND receipts.MONEY = ?"
             , SerializerWriteString.INSTANCE
-            , new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}))
+            , new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE, Datas.INT, Datas.INT}))
             .find(app.getActiveCashIndex());
             
         if (valtickets == null) {
@@ -201,6 +203,8 @@ public class PaymentsModel {
         } else {
             p.m_iPayments = (Integer) valtickets[0];
             p.m_dPaymentsTotal = (Double) valtickets[1];
+            p.firstTicket = (Integer) valtickets[2];
+            p.lastTicket = (Integer) valtickets[3];     
         }  
         
         List l = new StaticSentence(app.getSession(),            
@@ -362,6 +366,19 @@ public class PaymentsModel {
      */
     public int getPayments() {
         return m_iPayments;
+    }
+    /**
+     * @return
+     */
+    public int getFirstTicket(){
+        return firstTicket;
+    }
+    
+    /**
+     * @return
+     */
+    public int getLastTicket(){
+        return lastTicket;
     }
 
     /**
@@ -533,7 +550,15 @@ public class PaymentsModel {
      */
     public String printSalesTaxes() {
         return Formats.CURRENCY.formatValue(m_dSalesTaxes);
-    }     
+    }   
+    /**
+     * @return
+     */
+    public String printNetWTax(){
+        return Formats.CURRENCY.formatValue((m_dSalesBase == null || m_dSalesTaxes == null)
+                ? null
+                : m_dSalesBase - m_dSalesTaxes);
+    }
 
     /**
      *
@@ -1102,5 +1127,6 @@ public class PaymentsModel {
         public String getReason() {
             return s_PaymentReason;        
     }
+        
   }
 }

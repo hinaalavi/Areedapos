@@ -93,8 +93,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     private TaxesLogic taxeslogic;
 
     private Object pricesell;
+    private Object pricebuy;
+            
     private boolean priceselllock = false;
-
+    private boolean pricebuylock = false;
     private boolean reportlock = false;
     private int btn;
     
@@ -165,7 +167,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jVerpatrib.addActionListener(dirty); 
         m_jTax.addActionListener(dirty);
         m_jUom.addActionListener(dirty);        
-        m_jPriceBuy.getDocument().addDocumentListener(dirty);
+        m_jPriceBuywoTax.getDocument().addDocumentListener(dirty);
         m_jPriceSell.getDocument().addDocumentListener(dirty);
         m_jPrintTo.addActionListener(dirty);
         
@@ -198,12 +200,18 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         txtAttributes.getDocument().addDocumentListener(dirty);
         
         FieldsManager fm = new FieldsManager();
-        m_jPriceBuy.getDocument().addDocumentListener(fm);
+        FieldsManagerBuy fmBuy = new FieldsManagerBuy();
+        m_jPriceBuywoTax.getDocument().addDocumentListener(new PriceBuyWOTaxManager());
         m_jPriceSell.getDocument().addDocumentListener(new PriceSellManager());
         m_jTax.addActionListener(fm);
+        m_jTax.addActionListener(fmBuy);
+        m_jPriceBuy.getDocument().addDocumentListener(new BuyPriceTaxManager());
         m_jPriceSellTax.getDocument().addDocumentListener(new PriceTaxManager());
         m_jmargin.getDocument().addDocumentListener(new MarginManager());
         m_jGrossProfit.getDocument().addDocumentListener(new MarginManager());
+        
+        m_jmarginBuy.getDocument().addDocumentListener(new BuyMarginManager());
+        m_jgrossBuy.getDocument().addDocumentListener(new BuyMarginManager());
 
         m_jdate.getDocument().addDocumentListener(dirty);        
         
@@ -271,6 +279,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jVerpatrib.setSelected(false);
         m_UomModel.setSelectedKey(0);        
         m_jPriceBuy.setText("0");
+        setPriceBuy(null);
         setPriceSell(null);
         m_SuppliersModel.setSelectedKey(0);               
         
@@ -313,11 +322,13 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jAtt.setEnabled(false);
         m_jVerpatrib.setEnabled(false);  
         m_jTax.setEnabled(false);
-        m_jUom.setEnabled(false);        
+        m_jUom.setEnabled(false);  
+        m_jPriceBuywoTax.setEnabled(false);
         m_jPriceBuy.setEnabled(false);
         m_jPriceSell.setEnabled(false);
         m_jPriceSellTax.setEnabled(false);
         m_jmargin.setEnabled(false);
+        m_jmarginBuy.setEnabled(false);
         m_jSupplier.setEnabled(false);        
         
 // Tab Stock        
@@ -349,6 +360,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+        
+        calculateMarginBuy();
+        calculatePriceBuyTax();
+        calculateGPBuy();
     }
 
     @Override
@@ -372,6 +387,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         taxcatmodel.setSelectedKey("001");
         m_UomModel.setSelectedKey("0");        
         m_jPriceBuy.setText("0");
+        setPriceBuy(null);
         setPriceSell(null);        
 //        m_SuppliersModel.setSelectedKey(0);
         m_jSupplier.setSelectedIndex(selectedIndex);        
@@ -416,8 +432,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jPriceBuy.setEnabled(true);
         m_jPriceSell.setEnabled(true);
         m_jPriceSellTax.setEnabled(true);
+        m_jPriceBuywoTax.setEnabled(true);
         m_jmargin.setEnabled(true);
-        m_jSupplier.setEnabled(true);        
+        m_jSupplier.setEnabled(true);
+        m_jmarginBuy.setEnabled(true);
 
 // Tab Stock        
         m_jInCatalog.setEnabled(true);
@@ -447,7 +465,11 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         
         calculateMargin();
         calculatePriceSellTax();
-        calculateGP();        
+        calculateGP();  
+        
+        calculateMarginBuy();
+        calculatePriceBuyTax();
+        calculateGPBuy();
     }
 
     /**
@@ -465,7 +487,8 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         myprod[2] = m_jCode.getText();
         myprod[3] = m_jCodetype.getSelectedItem();
         myprod[4] = m_jName.getText();
-        myprod[5] = Formats.CURRENCY.parseValue(m_jPriceBuy.getText());
+        //myprod[5] = Formats.CURRENCY.parseValue(m_jPriceBuy.getText());
+        myprod[5] = pricebuy;
         myprod[6] = pricesell;
         myprod[7] = m_CategoryModel.getSelectedKey();
         myprod[8] = taxcatmodel.getSelectedKey();
@@ -515,7 +538,8 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jCode.setText(Formats.STRING.formatValue(myprod[2]));
         m_jCodetype.setSelectedItem(myprod[3]);
         m_jName.setText(Formats.STRING.formatValue(myprod[4]));
-        m_jPriceBuy.setText(Formats.CURRENCY.formatValue(myprod[5]));
+        //m_jPriceBuy.setText(Formats.CURRENCY.formatValue(myprod[5]));
+        setPriceBuy(myprod[5]);
         setPriceSell(myprod[6]);
         m_CategoryModel.setSelectedKey(myprod[7]);
         taxcatmodel.setSelectedKey(myprod[8]);
@@ -562,7 +586,9 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jPriceBuy.setEnabled(true);
         m_jPriceSell.setEnabled(true);
         m_jPriceSellTax.setEnabled(true);
+        m_jPriceBuywoTax.setEnabled(true);
         m_jmargin.setEnabled(true);
+        m_jmarginBuy.setEnabled(true);
         m_jSupplier.setEnabled(true);        
         
 // Tab Stock        
@@ -598,7 +624,11 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
         calculateMargin();
         calculatePriceSellTax();
-        calculateGP();        
+        calculateGP();  
+        
+        calculateMarginBuy();
+        calculatePriceBuyTax();
+        calculateGPBuy();
     }
     
     /**
@@ -619,7 +649,8 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jCode.setText(Formats.STRING.formatValue(myprod[2]));
         m_jCodetype.setSelectedItem(myprod[3]);
         m_jName.setText(Formats.STRING.formatValue(myprod[4]));
-        m_jPriceBuy.setText(Formats.CURRENCY.formatValue(myprod[5]));
+        //m_jPriceBuy.setText(Formats.CURRENCY.formatValue(myprod[5]));
+        setPriceBuy(myprod[5]);
         setPriceSell(myprod[6]);
         m_CategoryModel.setSelectedKey(myprod[7]);
         taxcatmodel.setSelectedKey(myprod[8]);
@@ -666,6 +697,8 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jPriceBuy.setEnabled(false);
         m_jPriceSell.setEnabled(false);
         m_jPriceSellTax.setEnabled(false);
+        m_jPriceBuywoTax.setEnabled(false);
+        m_jmarginBuy.setEnabled(false);
         m_jmargin.setEnabled(false);
         m_jPrintTo.setEnabled(false);
         
@@ -700,6 +733,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
+        
+        calculateMarginBuy();
+        calculatePriceBuyTax();
+        calculateGPBuy();
     }
 
 
@@ -829,30 +866,37 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
 
         switch (btn) {
             case 1:
+                System.out.println("1");
                 m_jDisplay.insert("<br>", m_jDisplay.getCaretPosition());
                 break;
             case 2: 
+                System.out.println("2");
                 String hexcolor = color2HexString(colourChooser.getColor());                
                 m_jDisplay.insert("<font color=" + hexcolor + ">"                
                     , m_jDisplay.getCaretPosition());
                 break;
             case 3:
+                System.out.println("3");
                 m_jDisplay.insert("<font size=+2>"
                     , m_jDisplay.getCaretPosition());
                 break;
             case 4:
+                System.out.println("4");
                 m_jDisplay.insert("<font size=-2>"
                     , m_jDisplay.getCaretPosition());
                 break;
             case 5:
+                System.out.println("5");
                 m_jDisplay.insert("<b> </b>"
                     , m_jDisplay.getCaretPosition());
                 break;
             case 6:
+                System.out.println("6");
                 m_jDisplay.insert("<i> </i>"
                     , m_jDisplay.getCaretPosition());
                 break;
             case 7:
+                System.out.println("7");
 // defaults to file:/ for local disk
 // http:// also usable for remote image                
                 JFileChooser fc = new JFileChooser();
@@ -867,15 +911,20 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 }
                 break;                
                 
-            case 8: htmlString = ohtmlString;
-                m_jDisplay.setText(htmlString);
-                break;
-            case 9: 
+            case 8:System.out.println("8");
+                    htmlString = ohtmlString;
+                    System.out.println("html "+htmlString);
+                    //m_jDisplay.setText(htmlString);
+                    m_jDisplay.insert(htmlString
+                    , m_jDisplay.getCaretPosition());
+                    break;
+            case 9: System.out.println("9");
                 m_jDisplay.insert("<div style=background-color:black;color:white;padding:10px;>"
                     , m_jDisplay.getCaretPosition());
                 break;
             default: htmlString +="";
-                m_jDisplay.setText(htmlString);                            
+                m_jDisplay.setText(htmlString); 
+                System.out.println("default");
         }
     }
 
@@ -914,6 +963,22 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
 
+    private void calculateMarginBuy() {
+
+        if (!reportlock) {
+            reportlock = true;
+
+            Double dPriceBuy = readCurrency(m_jPriceBuy.getText());
+            Double dPriceBuywoTax = (Double) pricebuy;
+
+            if (dPriceBuy == null || dPriceBuywoTax == null) {
+                m_jmarginBuy.setText(null);
+            } else {
+                m_jmarginBuy.setText(Formats.PERCENT.formatValue(dPriceBuywoTax.doubleValue() / dPriceBuy.doubleValue() - 1.0));
+            }
+            reportlock = false;
+        }
+    }
     private void calculatePriceSellTax() {
 
         if (!reportlock) {
@@ -926,6 +991,22 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             } else {
                 double dTaxRate = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getSelectedItem());
                 m_jPriceSellTax.setText(Formats.CURRENCY.formatValue(dPriceSell.doubleValue() * (1.0 + dTaxRate)));
+            }
+            reportlock = false;
+        }
+    }
+    private void calculatePriceBuyTax() {
+
+        if (!reportlock) {
+            reportlock = true;
+
+            Double dPriceBuy = (Double) pricebuy;
+            
+            if (dPriceBuy == null) {
+                m_jPriceBuy.setText(null);
+            } else {
+                double dTaxRate = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getSelectedItem());
+                m_jPriceBuy.setText(Formats.CURRENCY.formatValue(dPriceBuy.doubleValue() * (1.0 + dTaxRate)));
             }
             reportlock = false;
         }
@@ -950,6 +1031,24 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
     
+        private void calculateGPBuy() {
+
+        if (!reportlock) {
+            reportlock = true;
+
+            Double dPriceBuy = readCurrency(m_jPriceBuy.getText());
+            Double dPriceBuywoTax = (Double) pricebuy;
+ 
+            if (dPriceBuy == null || dPriceBuywoTax == null) {
+                m_jgrossBuy.setText(null);
+            } else {
+                m_jgrossBuy.setText(Formats.PERCENT.formatValue(
+                    (dPriceBuy.doubleValue() - dPriceBuywoTax.doubleValue())
+                    /dPriceBuy.doubleValue()));
+            }
+            reportlock = false;
+        }
+    }
     
     private void calculatePriceSellfromMargin() {
 
@@ -963,6 +1062,25 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 setPriceSell(null);
             } else {
                 setPriceSell(dPriceBuy.doubleValue() * (1.0 + dMargin.doubleValue()));
+            }
+
+            reportlock = false;
+        }
+
+    }
+    
+    private void calculatePriceBuyfromMargin() {
+
+        if (!reportlock) {
+            reportlock = true;
+
+            Double dPriceBuy = readCurrency(m_jPriceBuy.getText());
+            Double dMargin = readPercent(m_jmarginBuy.getText());
+            
+            if (dMargin == null || dPriceBuy == null) {
+                setPriceBuy(null);
+            } else {
+                setPriceBuy(dPriceBuy.doubleValue() * (1.0 + dMargin.doubleValue()));
             }
 
             reportlock = false;
@@ -988,6 +1106,23 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }
 
+    private void calculatePriceBuyfromPST() {
+
+        if (!reportlock) {
+            reportlock = true;
+
+            Double dPriceBuyTax = readCurrency(m_jPriceBuy.getText());
+
+            if (dPriceBuyTax == null) {
+                setPriceBuy(null);
+            } else {
+                double dTaxRate = taxeslogic.getTaxRate((TaxCategoryInfo) taxcatmodel.getSelectedItem());
+                setPriceBuy(dPriceBuyTax.doubleValue() / (1.0 + dTaxRate));
+            }
+
+            reportlock = false;
+        }
+    }
     
     private void setPriceSell(Object value) {
 
@@ -996,6 +1131,15 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             pricesell = value;
             m_jPriceSell.setText(Formats.CURRENCY.formatValue(pricesell));
             priceselllock = false;
+        }
+    }
+    private void setPriceBuy(Object value) {
+
+        if (!pricebuylock) {
+            pricebuylock = true;
+            pricebuy = value;
+            m_jPriceBuywoTax.setText(Formats.CURRENCY.formatValue(pricebuy));
+            pricebuylock = false;
         }
     }
 
@@ -1010,7 +1154,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             calculateMargin();
             calculatePriceSellTax();
             calculateGP();            
-        }
+        }        
         @Override
         public void insertUpdate(DocumentEvent e) {
             if (!priceselllock) {
@@ -1033,6 +1177,43 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             calculateMargin();
             calculatePriceSellTax();
             calculateGP();            
+        }
+    }
+    private class PriceBuyWOTaxManager implements DocumentListener {
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            if (!pricebuylock) {
+                pricebuylock = true;
+                pricebuy = readCurrency(m_jPriceBuywoTax.getText());
+                pricebuylock = false;
+            }
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();            
+        }
+        
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            if (!pricebuylock) {
+                pricebuylock = true;
+                pricebuy = readCurrency(m_jPriceBuywoTax.getText());
+                pricebuylock = false;
+            }
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();            
+        }
+        
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            if (!pricebuylock) {
+                pricebuylock = true;
+                pricebuy = readCurrency(m_jPriceBuywoTax.getText());
+                pricebuylock = false;
+            }
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();            
         }
     }
 
@@ -1063,6 +1244,34 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             calculateGP();            
         }
     }
+    
+    private class FieldsManagerBuy implements DocumentListener, ActionListener {
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();         
+            
+        }
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();            
+        }
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();            
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            calculateMarginBuy();
+            calculatePriceBuyTax();
+            calculateGPBuy();          
+        }
+    }
 
     private class PriceTaxManager implements DocumentListener {
         @Override
@@ -1084,6 +1293,26 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             calculateGP();            
         }
     }
+    private class BuyPriceTaxManager implements DocumentListener {
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            calculatePriceBuyfromPST();
+            calculateMarginBuy();
+            calculateGPBuy();           
+        }
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            calculatePriceBuyfromPST();
+            calculateMarginBuy();
+            calculateGPBuy();              
+        }
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            calculatePriceBuyfromPST();
+            calculateMarginBuy();
+            calculateGPBuy();                
+        }
+    }
 
     private class MarginManager implements DocumentListener  {
         @Override
@@ -1103,6 +1332,26 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             calculatePriceSellfromMargin();
             calculatePriceSellTax();
             calculateGP();            
+        }
+    }
+    private class BuyMarginManager implements DocumentListener  {
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            calculatePriceBuyfromMargin();
+            calculatePriceBuyTax();
+            calculateGPBuy();
+        }
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            calculatePriceBuyfromMargin();
+            calculatePriceBuyTax();
+            calculateGPBuy();
+        }
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            calculatePriceBuyfromMargin();
+            calculatePriceBuyTax();
+            calculateGPBuy();           
         }
     }
 
@@ -1162,6 +1411,10 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         jLabel17 = new javax.swing.JLabel();
         m_jSupplier = new javax.swing.JComboBox();
         jBtnSupplier = new javax.swing.JButton();
+        jLabel24 = new javax.swing.JLabel();
+        m_jPriceBuywoTax = new javax.swing.JTextField();
+        m_jgrossBuy = new javax.swing.JTextField();
+        m_jmarginBuy = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         m_jstockcost = new javax.swing.JTextField();
@@ -1346,6 +1599,11 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         m_jPriceBuy.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         m_jPriceBuy.setText("0");
         m_jPriceBuy.setPreferredSize(new java.awt.Dimension(200, 30));
+        m_jPriceBuy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jPriceBuyActionPerformed(evt);
+            }
+        });
 
         m_jVerpatrib.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         m_jVerpatrib.setText(bundle.getString("label.mandatory")); // NOI18N
@@ -1392,6 +1650,33 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
             }
         });
 
+        jLabel24.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel24.setText("Buy Price exc'");
+
+        m_jPriceBuywoTax.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        m_jPriceBuywoTax.setPreferredSize(new java.awt.Dimension(200, 30));
+        m_jPriceBuywoTax.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jPriceBuywoTaxActionPerformed(evt);
+            }
+        });
+
+        m_jgrossBuy.setBackground(new java.awt.Color(240, 240, 240));
+        m_jgrossBuy.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        m_jgrossBuy.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        m_jgrossBuy.setEnabled(false);
+        m_jgrossBuy.setPreferredSize(new java.awt.Dimension(110, 30));
+        m_jgrossBuy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jgrossBuyActionPerformed(evt);
+            }
+        });
+
+        m_jmarginBuy.setBackground(new java.awt.Color(240, 240, 240));
+        m_jmarginBuy.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        m_jmarginBuy.setEnabled(false);
+        m_jmarginBuy.setPreferredSize(new java.awt.Dimension(110, 30));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1419,18 +1704,24 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(m_jPriceSell, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(m_jGrossProfit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(m_jUom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(m_jmargin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(m_jPriceSell, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(m_jGrossProfit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(m_jgrossBuy, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(m_jmarginBuy, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(m_jmargin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(m_jUom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(115, 115, 115))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1451,6 +1742,19 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(m_jSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(7, 7, 7)
+                                .addComponent(m_jPriceBuywoTax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(13, 13, 13)
+                        .addComponent(jBtnSupplier))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(m_jRef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1463,14 +1767,8 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(m_jPriceBuy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(m_jSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBtnSupplier)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(m_jPriceBuy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(162, 162, 162))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1499,14 +1797,14 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(m_jTax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(m_jPriceSellTax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(m_jUom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(m_jUom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -1527,10 +1825,16 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                             .addComponent(m_jmargin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(m_jPriceBuywoTax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(m_jmarginBuy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(m_jgrossBuy, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(m_jSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBtnSupplier))
-                .addGap(14, 14, 14))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab(AppLocal.getIntString("label.prodgeneral"), jPanel1); // NOI18N
@@ -2102,13 +2406,13 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(m_jTextTip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(AppLocal.getIntString("label.button"), jPanel4); // NOI18N
 
         add(jTabbedPane1);
-        jTabbedPane1.setBounds(10, 10, 630, 420);
+        jTabbedPane1.setBounds(10, 10, 630, 480);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonHTMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHTMLActionPerformed
@@ -2258,6 +2562,18 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
         }
     }//GEN-LAST:event_m_jInCatalogActionPerformed
 
+    private void m_jPriceBuywoTaxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jPriceBuywoTaxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_m_jPriceBuywoTaxActionPerformed
+
+    private void m_jgrossBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jgrossBuyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_m_jgrossBuyActionPerformed
+
+    private void m_jPriceBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jPriceBuyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_m_jPriceBuyActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.alee.extended.colorchooser.WebColorPicker colourChooser;
     private javax.swing.JButton jBtnBold;
@@ -2289,6 +2605,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
@@ -2325,6 +2642,7 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     private javax.swing.JCheckBox m_jInCatalog;
     private javax.swing.JTextField m_jName;
     private javax.swing.JTextField m_jPriceBuy;
+    private javax.swing.JTextField m_jPriceBuywoTax;
     private javax.swing.JTextField m_jPriceSell;
     private javax.swing.JTextField m_jPriceSellTax;
     private javax.swing.JCheckBox m_jPrintKB;
@@ -2343,7 +2661,9 @@ public final class ProductsEditor extends javax.swing.JPanel implements EditorRe
     private javax.swing.JCheckBox m_jVprice;
     private javax.swing.JButton m_jbtndate;
     private javax.swing.JTextField m_jdate;
+    private javax.swing.JTextField m_jgrossBuy;
     private javax.swing.JTextField m_jmargin;
+    private javax.swing.JTextField m_jmarginBuy;
     private javax.swing.JTextField m_jstockcost;
     private javax.swing.JTextField m_jstockvolume;
     private javax.swing.JTextArea txtAttributes;

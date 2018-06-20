@@ -63,6 +63,7 @@ public class JPaymentSelectCustomer extends JPaymentSelect {
      */
     @Override
     protected void addTabs() {
+        System.out.println("in customer select ad tabs");
 // Bank Payment Receipt - Thanks Steve Clough! August 2011
         addTabPayment(new JPaymentSelect.JPaymentCashCreator());
         addTabPayment(new JPaymentSelect.JPaymentChequeCreator());
@@ -70,6 +71,8 @@ public class JPaymentSelectCustomer extends JPaymentSelect {
         addTabPayment(new JPaymentSelect.JPaymentBankCreator());
         addTabPayment(new JPaymentSelect.JPaymentMagcardCreator());
         addTabPayment(new JPaymentSelect.JPaymentSlipCreator());
+        addTabPayment(new JPaymentSelect.JPaymentChargedAccountCreator());
+        
     }
     
     /**

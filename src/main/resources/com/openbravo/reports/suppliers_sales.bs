@@ -24,7 +24,7 @@ report.setReport("/com/openbravo/reports/suppliers_sales");
 report.setResourceBundle("com/openbravo/reports/suppliers_messages");
 
 report.setSentence("SELECT " +
-       "suppliers.name AS SNAME, products.name AS PNAME, " +
+       "CONCAT(suppliers.name, ' ', suppliers.vatid) AS SNAME, products.name AS PNAME, " +
        "tickets.ticketid, tickets.tickettype, " +
        "SUM(ticketlines.units) AS UNITS, " +
        "SUM(ticketlines.units * ticketlines.price) AS TOTAL, " +

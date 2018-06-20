@@ -339,7 +339,7 @@ public class JPanelTicketSetup extends javax.swing.JPanel implements PanelConfig
         if (response == JOptionPane.YES_OPTION) {
         try {
             String db_user =(AppConfig.getInstance().getProperty("db.user"));
-            String db_url = (AppConfig.getInstance().getProperty("db.URL"));
+            String db_url = (AppConfig.getInstance().getProperty("db.URL"))+(AppConfig.getInstance().getProperty("db.schema"));
             String db_password = (AppConfig.getInstance().getProperty("db.password"));
             
             if (db_user != null && db_password != null && db_password.startsWith("crypt:")) {
@@ -350,7 +350,6 @@ public class JPanelTicketSetup extends javax.swing.JPanel implements PanelConfig
             conn = DriverManager.getConnection(db_url,db_user,db_password);
             sdbmanager = conn.getMetaData().getDatabaseProductName();
             stmt = (Statement) conn.createStatement();
-            
             if ("MySQL".equals(sdbmanager)) {
                 SQL = "UPDATE pickup_number SET id = 0";
                 try {

@@ -39,7 +39,8 @@ public class ProductStock {
     Double maximum;
     Double pricebuy;
     Double pricesell;
-    Date memodate;    
+    Date memodate;
+    Double tax;
 
     /**
      * Main method to return a product's "live" stock position 
@@ -59,7 +60,7 @@ public class ProductStock {
      * @param memodate 
      */
     public ProductStock(String pId, String location, Double units, Double minimum, 
-            Double maximum, Double pricebuy, Double pricesell, Date memodate) {
+            Double maximum, Double pricebuy, Double pricesell, Date memodate, Double tax) {
 
         this.pId = pId;
         this.location = location;
@@ -69,6 +70,7 @@ public class ProductStock {
         this.pricebuy = pricebuy;
         this.pricesell = pricesell;
         this.memodate = memodate;
+        this.tax = tax;
     }
 
     /**
@@ -156,7 +158,17 @@ public class ProductStock {
     }
     public void setMemoDate(Date memodate) {
         this.memodate = memodate;
-    }    
+    }  
+    /**
+     *
+     * @return tax Double value
+     */
+    public Double getTax() {
+        return tax;
+    }
+    public void setTax(Double tax) {
+        this.tax = tax;
+    }
 
     
     /**
@@ -176,10 +188,11 @@ public class ProductStock {
                 Double maximum = dr.getDouble(5);
                 Double pricebuy = dr.getDouble(6);                
                 Double pricesell = dr.getDouble(7);
-                Date memodate = dr.getTimestamp(8);                
+                Date memodate = dr.getTimestamp(8);  
+                Double tax = dr.getDouble(9);
                 
                 return 
-                    new ProductStock(pId, location, units, minimum, maximum, pricebuy, pricesell, memodate);                
+                    new ProductStock(pId, location, units, minimum, maximum, pricebuy, pricesell, memodate, tax);                
             }
         };
     }

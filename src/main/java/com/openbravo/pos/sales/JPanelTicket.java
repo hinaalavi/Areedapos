@@ -731,6 +731,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         if (executeEventAndRefresh("ticket.removeline", new ScriptArg("index", i)) == null) {
 
             String ticketID = Integer.toString(m_oTicket.getTicketId());
+            
             if (m_oTicket.getTicketId()==0){
                 ticketID="Void";
             }

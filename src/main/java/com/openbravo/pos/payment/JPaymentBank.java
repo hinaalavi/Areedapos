@@ -43,10 +43,12 @@ public class JPaymentBank extends javax.swing.JPanel implements JPaymentInterfac
         
         m_notifier = notifier;
         
-        initComponents();  
+        initComponents(); 
+        jPanel2.setEnabled(false);
+        jPanel4.setEnabled(false);
         
-        m_jTendered.addPropertyChangeListener("Edition", new RecalculateState());
-        m_jTendered.addEditorKeys(m_jKeys);
+       // m_jTendered.addPropertyChangeListener("Edition", new RecalculateState());
+       // m_jTendered.addEditorKeys(m_jKeys);
         
         
         
@@ -64,10 +66,10 @@ public class JPaymentBank extends javax.swing.JPanel implements JPaymentInterfac
         m_dTotal = dTotal;
         
         
-        m_jTendered.reset();
-        m_jTendered.activate();
+       // m_jTendered.reset();
+       // m_jTendered.activate();
         
-        printState();
+        //printState();
         
     }
 
@@ -129,6 +131,8 @@ public class JPaymentBank extends javax.swing.JPanel implements JPaymentInterfac
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         m_jMoneyEuros = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -168,15 +172,39 @@ public class JPaymentBank extends javax.swing.JPanel implements JPaymentInterfac
         m_jMoneyEuros.setBounds(120, 4, 180, 30);
 
         add(jPanel4, java.awt.BorderLayout.CENTER);
+
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel1.setText("Paid through Carriage!");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(225, 225, 225)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(230, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(255, Short.MAX_VALUE))
+        );
+
+        add(jPanel5, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private com.openbravo.editor.JEditorKeys m_jKeys;
     private javax.swing.JLabel m_jMoneyEuros;
     private com.openbravo.editor.JEditorCurrencyPositive m_jTendered;

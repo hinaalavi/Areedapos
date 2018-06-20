@@ -97,10 +97,16 @@ public class PaymentInfoMagcard extends PaymentInfo {
         p.m_sErrorMessage = m_sErrorMessage;
         return p;
     }
-
+        
+    @Override
     public String getName() {
 //        return "magcard";
-        return "ccard";
+        if(getCardName().equalsIgnoreCase("VISA") || getCardName().equalsIgnoreCase("MAST")){
+            return getCardName();
+        }else{
+            return "ccard";
+        }
+        //return "ccard";
     }
 
     @Override
@@ -174,7 +180,7 @@ public class PaymentInfoMagcard extends PaymentInfo {
        } else if (sCardNumber.startsWith("3")) {
            c = "DINE";
        }
-       m_sCardNumber = c;
+       //m_sCardNumber = c;
        return c;
    }
    

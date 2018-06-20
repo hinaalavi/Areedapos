@@ -941,7 +941,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         "stocklevel.stockmaximum AS Maximum, " +
                         "products.pricebuy, " +
                         "products.pricesell, " +
-                        "products.memodate " +
+                        "products.memodate, " + "products.pricebuy " +
                         "FROM locations " +
                         "INNER JOIN ((products " +
                         "INNER JOIN stockcurrent " +
@@ -975,7 +975,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 "stocklevel.stockmaximum AS Maximum, " +
                 "Round(products.pricebuy,2) AS PriceBuy, " +
                 "Round((products.pricesell * taxes.rate) + products.pricesell,2) AS PriceSell, " +
-                "products.memodate " +
+                "products.memodate, " + "taxes.rate AS Tax "+
             "FROM ((((taxcategories TC " +
                 "INNER JOIN taxes taxes " +
                 "ON (TC.id = taxes.category)) " +

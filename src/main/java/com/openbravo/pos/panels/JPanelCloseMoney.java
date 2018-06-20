@@ -115,7 +115,7 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
     }
     
     /**
-     *
+-+     *
      * @return
      */
     @Override
@@ -353,7 +353,6 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
     }
     
     private void printPayments(String report) {
-        
         String sresource = m_dlSystem.getResourceAsXML(report);
         if (sresource == null) {
             MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, 
@@ -377,6 +376,10 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
     private class FormatsPayment extends Formats {
         @Override
         protected String formatValueInt(Object value) {
+            String val = (String) value;
+            if(val.equals("voucherin")){
+              return AppLocal.getIntString("transpayment." + "voucher");  
+            }
             return AppLocal.getIntString("transpayment." + (String) value);
         }   
         @Override

@@ -77,6 +77,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
      */
     protected JPaymentSelect(java.awt.Frame parent, boolean modal, ComponentOrientation o) {
         super(parent, modal);
+        System.out.println("In JPayment Select");
         initComponents();    
         this.applyComponentOrientation(o);
         getRootPane().setDefaultButton(m_jButtonOK); 
@@ -90,7 +91,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     protected JPaymentSelect(java.awt.Dialog parent, boolean modal, ComponentOrientation o) {
         super(parent, modal);
         initComponents();    
-        
+        System.out.println("In JPayment Select potected");
         m_jButtonPrint.setVisible(true);
         this.applyComponentOrientation(o);
         if (printselected) {
@@ -129,6 +130,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             
       public boolean showDialog(double total, CustomerInfoExt customerext,double deposit) {
         m_aPaymentInfo = new PaymentInfoList();
+          System.out.println("list ....."+m_aPaymentInfo);
         accepted = false;
         total -= deposit;
         m_dTotal = total;
@@ -222,6 +224,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             }
             
             jpayinterface.getComponent().applyComponentOrientation(getComponentOrientation());
+            System.out.println("in add tab payment");
             m_jTabPayment.addTab(
                     AppLocal.getIntString(jpay.getLabelKey()),
                     new javax.swing.ImageIcon(getClass().getResource(jpay.getIconKey())),
@@ -240,10 +243,12 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     public class JPaymentCashCreator implements JPaymentCreator {
         @Override
         public JPaymentInterface createJPayment() {
+            System.out.println("In JPaymentCashCreator");
             return new JPaymentCashPos(JPaymentSelect.this, dlSystem);
         }
         @Override
         public String getKey() { 
+            System.out.println("getKey");
             return "payment.cash"; }
         @Override
         public String getLabelKey() { 
@@ -288,6 +293,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
     public class JPaymentMagcardCreator implements JPaymentCreator {
         @Override
         public JPaymentInterface createJPayment() {
+            System.out.println("In card");
             return new JPaymentMagcard(app, JPaymentSelect.this);
         }
         @Override
@@ -315,6 +321,25 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
         @Override
         public String getLabelKey() { 
             return "tab.free"; 
+        }
+        @Override
+        public String getIconKey() { 
+            return "/com/openbravo/images/free.png"; 
+        }
+    }
+    
+       public class JPaymentChargedAccountCreator implements JPaymentCreator {
+        @Override
+        public JPaymentInterface createJPayment() {
+            return new JPaymentChargedAccount(JPaymentSelect.this);
+        }
+        @Override
+        public String getKey() { 
+            return "payment.charged"; 
+        }
+        @Override
+        public String getLabelKey() { 
+            return "tab.charged"; 
         }
         @Override
         public String getIconKey() { 
@@ -359,7 +384,26 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
             return "/com/openbravo/images/cash.png"; 
         }
     }
-        
+    
+    public class JPaymentDeleteRefundCreator implements JPaymentCreator {
+        @Override
+        public JPaymentInterface createJPayment() {
+            return new JPaymentRefund(JPaymentSelect.this, "deleterefund");
+        }
+        @Override
+        public String getKey() { 
+            return "refund.delete"; 
+        }
+        @Override
+        public String getLabelKey() { 
+            return "tab.deleterefund"; 
+        }
+        @Override
+        public String getIconKey() { 
+            return "/com/openbravo/images/editdelete.png"; 
+        }
+    } 
+    
     public class JPaymentChequeRefundCreator implements JPaymentCreator {
         @Override
         public JPaymentInterface createJPayment() {
@@ -683,7 +727,7 @@ public abstract class JPaymentSelect extends javax.swing.JDialog
 
         getContentPane().add(jPanel5, java.awt.BorderLayout.SOUTH);
 
-        setSize(new java.awt.Dimension(758, 497));
+        setSize(new java.awt.Dimension(775, 497));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

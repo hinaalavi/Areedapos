@@ -285,6 +285,10 @@ public class JPanelCloseMoneyReprint extends JPanel implements JPanelView, BeanF
     private class FormatsPayment extends Formats {
         @Override
         protected String formatValueInt(Object value) {
+            String val = (String) value;
+            if(val.equals("voucherin")){
+              return AppLocal.getIntString("transpayment." + "voucher");  
+            }
             return AppLocal.getIntString("transpayment." + (String) value);
         }   
         @Override

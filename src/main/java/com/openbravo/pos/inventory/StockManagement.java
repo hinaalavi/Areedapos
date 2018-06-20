@@ -324,6 +324,8 @@ public class StockManagement extends JPanel implements JPanelView {
         jTableProductStock.getColumnModel().getColumn(3).setPreferredWidth(50);        
         jTableProductStock.getColumnModel().getColumn(4).setPreferredWidth(50);
         jTableProductStock.getColumnModel().getColumn(5).setPreferredWidth(50);
+        jTableProductStock.getColumnModel().getColumn(6).setPreferredWidth(50);
+        jTableProductStock.getColumnModel().getColumn(7).setPreferredWidth(50);
         
         jTableProductStock.repaint();
     }
@@ -616,10 +618,11 @@ public class StockManagement extends JPanel implements JPanelView {
         String min = AppLocal.getIntString("label.tblProdHeaderCol4");
         String buy = AppLocal.getIntString("label.tblProdHeaderCol5");
         String val = AppLocal.getIntString("label.tblProdHeaderCol6");                
-
+        String buyPriceTax = AppLocal.getIntString("label.tblProdHeaderCol7");
+        String buyPrice = AppLocal.getIntString("label.tblProdHeaderCol8");
         List<ProductStock> stockList;
       
-        String[] columnNames = {loc, qty, max, min, buy, val};
+        String[] columnNames = {loc, qty, max, min, buy, val, buyPriceTax, buyPrice};
         
         
         public aStockTableModel(List<ProductStock> list) {
@@ -628,7 +631,7 @@ public class StockManagement extends JPanel implements JPanelView {
         
         @Override
         public int getColumnCount() {
-            return 6;            
+            return 8;            
         }
 
         @Override
@@ -652,8 +655,12 @@ public class StockManagement extends JPanel implements JPanelView {
                 case 4:
                     return productStock.getPriceSell();  
                 case 5:
-                    return productStock.getUnits() * productStock.getPriceSell();                     
+                    return productStock.getUnits() * productStock.getPriceSell();
                 case 6:
+                    return productStock.getPriceBuy();
+                case 7:
+                    return (productStock.getPriceBuy()).doubleValue() / (1.0 + productStock.getTax());     
+                case 8:
                     return productStock.getProductId();                    
                 default:
                     return "";
@@ -678,6 +685,10 @@ public class StockManagement extends JPanel implements JPanelView {
                 case 5:
                     return productStock.getUnits() * productStock.getPriceSell();
                 case 6:
+                    return productStock.getPriceBuy();
+                case 7:
+                    return (productStock.getPriceBuy()).doubleValue() / (1.0 + productStock.getTax());     
+                case 8:
                     return productStock.getProductId();                  
                 default:
                     return "";
@@ -1063,17 +1074,17 @@ public class StockManagement extends JPanel implements JPanelView {
 
         jTableProductStock.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Location", "Current", "Maximum", "Minimum", "PriceSell", "PriceValue"
+                "Location", "Current", "Maximum", "Minimum", "Price Sell", "PriceValue", "Buy Price inc*", "Buy Price exc*"
             }
         ));
         jTableProductStock.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
@@ -1243,6 +1254,8 @@ public class StockManagement extends JPanel implements JPanelView {
                 double dpricebuy = Double.parseDouble(spricebuy);
                 line.setPrice(dpricebuy);
                 m_invlines.setLine(i, line);
+               // jTableProductStock.setValueAt(dpricebuy, i, 6);
+               // jTableProductStock.setValueAt(dpricebuy, i, 7);
             }
         }
     }//GEN-LAST:event_m_jEditLineActionPerformed
