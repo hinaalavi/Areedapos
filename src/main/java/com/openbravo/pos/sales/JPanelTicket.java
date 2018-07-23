@@ -206,7 +206,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 */        
         
 // Set Configuration>General>Tickets toolbar simple : standard : restaurant option
-        m_ticketsbag = getJTicketsBag();    
+        m_ticketsbag = getJTicketsBag(); 
+        System.out.println("in jjjjjjjjjjjjj"+m_ticketsbag);
+        System.out.println("in japanel ticket"+m_ticketsbag.getBagComponent());
         m_jPanelBag.add(m_ticketsbag.getBagComponent(), BorderLayout.LINE_START);
         add(m_ticketsbag.getNullComponent(), "null");   
 

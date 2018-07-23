@@ -209,15 +209,14 @@ public class JTicketsBagRestaurant extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         m_TablePlan = new javax.swing.JButton();
         m_MoveTable = new javax.swing.JButton();
         m_DelTicket = new javax.swing.JButton();
         j_btnKitchen = new javax.swing.JButton();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        setMinimumSize(new java.awt.Dimension(250, 50));
-        setPreferredSize(new java.awt.Dimension(350, 50));
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        setLayout(new java.awt.BorderLayout());
 
         m_TablePlan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/tables.png"))); // NOI18N
         m_TablePlan.setToolTipText("Go to Table Plan");
@@ -226,14 +225,14 @@ public class JTicketsBagRestaurant extends javax.swing.JPanel {
         m_TablePlan.setMargin(new java.awt.Insets(0, 4, 0, 4));
         m_TablePlan.setMaximumSize(new java.awt.Dimension(50, 40));
         m_TablePlan.setMinimumSize(new java.awt.Dimension(50, 40));
-        m_TablePlan.setPreferredSize(new java.awt.Dimension(80, 45));
+        m_TablePlan.setPreferredSize(new java.awt.Dimension(60, 45));
         m_TablePlan.setRequestFocusEnabled(false);
         m_TablePlan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_TablePlanActionPerformed(evt);
             }
         });
-        add(m_TablePlan);
+        jPanel1.add(m_TablePlan);
 
         m_MoveTable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/movetable.png"))); // NOI18N
         m_MoveTable.setToolTipText("Move Table");
@@ -242,14 +241,14 @@ public class JTicketsBagRestaurant extends javax.swing.JPanel {
         m_MoveTable.setMargin(new java.awt.Insets(0, 4, 0, 4));
         m_MoveTable.setMaximumSize(new java.awt.Dimension(50, 40));
         m_MoveTable.setMinimumSize(new java.awt.Dimension(50, 40));
-        m_MoveTable.setPreferredSize(new java.awt.Dimension(80, 45));
+        m_MoveTable.setPreferredSize(new java.awt.Dimension(60, 45));
         m_MoveTable.setRequestFocusEnabled(false);
         m_MoveTable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_MoveTableActionPerformed(evt);
             }
         });
-        add(m_MoveTable);
+        jPanel1.add(m_MoveTable);
 
         m_DelTicket.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/sale_delete.png"))); // NOI18N
         m_DelTicket.setToolTipText("Delete Current Order");
@@ -258,42 +257,52 @@ public class JTicketsBagRestaurant extends javax.swing.JPanel {
         m_DelTicket.setMargin(new java.awt.Insets(0, 4, 0, 4));
         m_DelTicket.setMaximumSize(new java.awt.Dimension(50, 40));
         m_DelTicket.setMinimumSize(new java.awt.Dimension(50, 40));
-        m_DelTicket.setPreferredSize(new java.awt.Dimension(80, 45));
+        m_DelTicket.setPreferredSize(new java.awt.Dimension(60, 45));
         m_DelTicket.setRequestFocusEnabled(false);
         m_DelTicket.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_DelTicketActionPerformed(evt);
             }
         });
-        add(m_DelTicket);
+        jPanel1.add(m_DelTicket);
 
         j_btnKitchen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/printer24.png"))); // NOI18N
         j_btnKitchen.setToolTipText("Send to Kichen Printer");
         j_btnKitchen.setMargin(new java.awt.Insets(0, 4, 0, 4));
         j_btnKitchen.setMaximumSize(new java.awt.Dimension(50, 40));
         j_btnKitchen.setMinimumSize(new java.awt.Dimension(50, 40));
-        j_btnKitchen.setPreferredSize(new java.awt.Dimension(80, 45));
+        j_btnKitchen.setPreferredSize(new java.awt.Dimension(60, 45));
         j_btnKitchen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 j_btnKitchenActionPerformed(evt);
             }
         });
-        add(j_btnKitchen);
+        jPanel1.add(j_btnKitchen);
         j_btnKitchen.getAccessibleContext().setAccessibleDescription("Send to Remote Printer");
+
+        add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+//GEN-FIRST:event_j_btnKitchenActionPerformed
+ 
+//GEN-LAST:event_j_btnKitchenActionPerformed
+
+//GEN-FIRST:event_m_DelTicketActionPerformed
+ 
+//GEN-LAST:event_m_DelTicketActionPerformed
 
     private void m_MoveTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_MoveTableActionPerformed
 
-// JG 6 Nov 13 - clear Customer from orignal table - Thanks David Kurniawan
+        // JG 6 Nov 13 - clear Customer from orignal table - Thanks David Kurniawan
         restDB.clearCustomerNameInTableById(m_restaurant.getTable());
         restDB.clearWaiterNameInTableById(m_restaurant.getTable());
 
         restDB.setTableMovedFlag(m_restaurant.getTable());
-        m_restaurant.moveTicket();                 
-             
+        m_restaurant.moveTicket();
+
     }//GEN-LAST:event_m_MoveTableActionPerformed
 
-    @SuppressWarnings("empty-statement")
+     @SuppressWarnings("empty-statement")
     private void m_DelTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DelTicketActionPerformed
        boolean pinOK = false;
 
@@ -336,13 +345,12 @@ public class JTicketsBagRestaurant extends javax.swing.JPanel {
                 m_restaurant.deleteTicket();
             }          
     }//GEN-LAST:event_m_DelTicketActionPerformed
-
-    private void m_TablePlanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_TablePlanActionPerformed
-    // outta here back to TableMap   
-        m_restaurant.newTicket();            
-    }//GEN-LAST:event_m_TablePlanActionPerformed
     
-    @SuppressWarnings("empty-statement")
+    private void m_TablePlanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_TablePlanActionPerformed
+        // outta here back to TableMap
+        m_restaurant.newTicket();
+    }//GEN-LAST:event_m_TablePlanActionPerformed
+@SuppressWarnings("empty-statement")
     private void j_btnKitchenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j_btnKitchenActionPerformed
         ticket = m_restaurant.getActiveTicket();
         String rScript = (m_dlSystem.getResourceAsText("script.SendOrder"));
@@ -374,9 +382,10 @@ public class JTicketsBagRestaurant extends javax.swing.JPanel {
                 }    
             }
     }//GEN-LAST:event_j_btnKitchenActionPerformed
-  
+   
       
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JButton j_btnKitchen;
     private javax.swing.JButton m_DelTicket;
     private javax.swing.JButton m_MoveTable;

@@ -50,10 +50,10 @@ public class JPaymentCheque extends javax.swing.JPanel implements JPaymentInterf
         jPanel2.setEnabled(false);
         jPanel4.setEnabled(false);
         
-       // m_jTendered.addPropertyChangeListener("Edition", new RecalculateState());
-       // m_jTendered.addEditorKeys(m_jKeys);
+        m_jTendered.addPropertyChangeListener("Edition", new RecalculateState());
+        m_jTendered.addEditorKeys(m_jKeys);
         
- /* added JDL 11.05.13        
+ // added JDL 11.05.13        
         AppConfig m_config =  new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));        
         m_config.load();        
         priceWith00 =("true".equals(m_config.getProperty("till.pricewith00")));
@@ -62,7 +62,7 @@ public class JPaymentCheque extends javax.swing.JPanel implements JPaymentInterf
             m_jKeys.dotIs00(true);
         }
         m_config=null;
-*/ 
+ 
         
         
     }
@@ -79,10 +79,10 @@ public class JPaymentCheque extends javax.swing.JPanel implements JPaymentInterf
         m_dTotal = dTotal;
         
         
-       // m_jTendered.reset();
-       // m_jTendered.activate();
+        m_jTendered.reset();
+        m_jTendered.activate();
         
-       // printState();
+        printState();
         
     }
 

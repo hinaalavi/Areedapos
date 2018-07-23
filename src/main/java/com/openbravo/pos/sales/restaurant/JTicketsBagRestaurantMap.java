@@ -334,6 +334,7 @@ public class JTicketsBagRestaurantMap extends JTicketsBag {
      */
     @Override
     protected JComponent getBagComponent() {
+        System.out.println("In bag component----------");
         return m_restaurantmap;
     }
 

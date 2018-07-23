@@ -55,6 +55,7 @@
     <class name="payment.slip"/>    
     <class name="payment.free"/>
     <class name="payment.debt"/>
+    <class name="refund.delete"/>
     <class name="refund.cash"/>
     <class name="refund.cheque"/>
     <class name="refund.voucher"/>

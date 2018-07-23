@@ -78,7 +78,7 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
             jPanel4.setEnabled(false);
         
 
-       /* try {
+        try {
             dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
             dlCustomers = (DataLogicCustomers) app.getBean("com.openbravo.pos.customers.DataLogicCustomers");
             m_sentvouch = dlSales.getVoucherList();
@@ -97,7 +97,7 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
             webLblcustomerName.setText(null);            
             
         } catch (BasicException ex) {
-        } */
+        } 
     }    
     
     /**
@@ -111,13 +111,13 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
     
             m_dTotal = dTotal;
             
-           // m_jTendered.reset();
+         //   m_jTendered.reset();
 //            m_jTendered.activate();
 
-        //    m_jKeys.setEnabled(false);
-          //  m_jTendered.setEnabled(false);            
+            m_jKeys.setEnabled(false);
+            m_jTendered.setEnabled(false);            
             
-          //  printState();
+            printState();
         }
 
     /**
@@ -162,7 +162,8 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
 
         Double value = m_jTendered.getDoubleValue();
         if (value == null) {
-            m_dTicket = 0.0;
+            //m_dTicket = 0.0;
+            m_dTicket = m_dTotal;
         } else {
             m_dTicket = value;
         } 
@@ -346,7 +347,7 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
 
     private void m_jVoucherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jVoucherActionPerformed
     
-       /* m_jMoneyEuros.setText(null);
+        m_jMoneyEuros.setText(null);
 
         if (m_VoucherModel.getSelectedKey()!=null){
             try {
@@ -371,7 +372,7 @@ public class JPaymentVoucher extends javax.swing.JPanel implements JPaymentInter
 //                ex.printStackTrace();
             }
 
-        }*/
+        }
     }//GEN-LAST:event_m_jVoucherActionPerformed
     
     

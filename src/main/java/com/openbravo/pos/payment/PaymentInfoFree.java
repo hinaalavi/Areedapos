@@ -42,7 +42,7 @@ public class PaymentInfoFree extends PaymentInfo {
         return "free";
     }   
     public double getTotal() {
-        return m_dTotal;
+        return 0.0;
     }
     public double getPaid() {
         return (0.0); 

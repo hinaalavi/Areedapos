@@ -47,8 +47,8 @@ public class JPaymentBank extends javax.swing.JPanel implements JPaymentInterfac
         jPanel2.setEnabled(false);
         jPanel4.setEnabled(false);
         
-       // m_jTendered.addPropertyChangeListener("Edition", new RecalculateState());
-       // m_jTendered.addEditorKeys(m_jKeys);
+        m_jTendered.addPropertyChangeListener("Edition", new RecalculateState());
+        m_jTendered.addEditorKeys(m_jKeys);
         
         
         
@@ -66,10 +66,10 @@ public class JPaymentBank extends javax.swing.JPanel implements JPaymentInterfac
         m_dTotal = dTotal;
         
         
-       // m_jTendered.reset();
-       // m_jTendered.activate();
+        m_jTendered.reset();
+        m_jTendered.activate();
         
-        //printState();
+        printState();
         
     }
 
